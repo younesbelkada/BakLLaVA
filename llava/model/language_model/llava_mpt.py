@@ -23,18 +23,19 @@ import math
 from transformers import AutoConfig, AutoModelForCausalLM
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
-from .mpt.modeling_mpt import MPTConfig, MPTForCausalLM, MPTModel
+# from .mpt.modeling_mpt import MPTConfig, MPTForCausalLM, MPTModel
+from transformers import MptConfig, MptForCausalLM, MptModel
 from llava.model.llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
 
-class LlavaMPTConfig(MPTConfig):
+class LlavaMPTConfig(MptConfig):
     model_type = "llava_mpt"
 
 
-class LlavaMPTModel(LlavaMetaModel, MPTModel):
+class LlavaMPTModel(LlavaMetaModel, MptModel):
     config_class = LlavaMPTConfig
 
-    def __init__(self, config: MPTConfig):
+    def __init__(self, config: MptConfig):
         config.hidden_size = config.d_model
         super(LlavaMPTModel, self).__init__(config)
     
@@ -42,12 +43,12 @@ class LlavaMPTModel(LlavaMetaModel, MPTModel):
         return self.wte(x)
 
 
-class LlavaMPTForCausalLM(MPTForCausalLM, LlavaMetaForCausalLM):
+class LlavaMPTForCausalLM(MptForCausalLM, LlavaMetaForCausalLM):
     config_class = LlavaMPTConfig
     supports_gradient_checkpointing = True
 
     def __init__(self, config):
-        super(MPTForCausalLM, self).__init__(config)
+        super(MptForCausalLM, self).__init__(config)
 
         if not config.tie_word_embeddings:
             raise ValueError('MPTForCausalLM only supports tied word embeddings')
